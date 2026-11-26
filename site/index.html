@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>agent-guard: guardrails for AI coding agents (Claude Code and Codex)</title>
+  <meta name="description" content="agent-guard stops AI coding agents from taking shortcuts: skipped tests, silenced type checks, TODOs and fake 'all tests pass' claims. Open-source hooks for Claude Code and Codex by Amit Kumar.">
+  <meta name="author" content="Amit Kumar">
+  <meta name="google-site-verification" content="g1PCJtyBmYV6DVhuMGis1_F4GsWVHdhJdxbBcy70fHQ">
+  <meta name="keywords" content="AI coding agent guardrails, Claude Code hooks, Codex hooks, reward hacking, AI slop, skipped tests, coding agents, LLM agents, code quality, Amit Kumar, growthperclick">
+  <link rel="canonical" href="https://ravenrepo.github.io/agent-guard/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#0d1117">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="agent-guard">
+  <meta property="og:title" content="agent-guard: guardrails for AI coding agents">
+  <meta property="og:description" content="Stop AI coding agents from gaming the tests: refuse shortcuts before they land and gate 'all tests pass' on a real run. Open source, by Amit Kumar.">
+  <meta property="og:url" content="https://ravenrepo.github.io/agent-guard/">
+  <meta property="og:image" content="https://ravenrepo.github.io/agent-guard/og.png">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="640">
+  <meta property="og:image:alt" content="agent-guard: guardrails for AI coding agents, by Amit Kumar.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@growthperclick">
+  <meta name="twitter:creator" content="@growthperclick">
+  <meta name="twitter:title" content="agent-guard: guardrails for AI coding agents">
+  <meta name="twitter:description" content="Refuse coding-agent shortcuts before they land and gate 'all tests pass' on a real run. Hooks for Claude Code and Codex.">
+  <meta name="twitter:image" content="https://ravenrepo.github.io/agent-guard/og.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://iamamitkumar.dev/#person",
+        "name": "Amit Kumar",
+        "alternateName": ["growthperclick", "RavenRepo"],
+        "url": "https://iamamitkumar.dev",
+        "jobTitle": "Founder and AI engineer",
+        "sameAs": [
+          "https://growthperclick.com",
+          "https://github.com/RavenRepo",
+          "https://x.com/growthperclick",
+          "https://www.linkedin.com/in/growthperclick/",
+          "https://peerlist.io/growthperclick",
+          "https://substack.com/@growthperclick",
+          "https://medium.com/@dev.amitkumar"
+        ]
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "@id": "https://ravenrepo.github.io/agent-guard/#software",
+        "name": "agent-guard",
+        "description": "Guardrails for AI coding agents: hooks that refuse shortcuts such as skipped tests, silenced type checks and placeholder code before they land, gate success claims on a passing run of the matching check, a runner-side diff scan, and sandboxed guarded builds.",
+        "url": "https://ravenrepo.github.io/agent-guard/",
+        "codeRepository": "https://github.com/RavenRepo/agent-guard",
+        "programmingLanguage": "Python",
+        "runtimePlatform": "Python 3.10+",
+        "license": "https://www.apache.org/licenses/LICENSE-2.0",
+        "version": "0.3.0",
+        "keywords": "AI coding agents, guardrails, Claude Code hooks, Codex hooks, reward hacking, code quality",
+        "author": { "@id": "https://iamamitkumar.dev/#person" },
+        "maintainer": { "@id": "https://iamamitkumar.dev/#person" }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://ravenrepo.github.io/agent-guard/#webpage",
+        "url": "https://ravenrepo.github.io/agent-guard/",
+        "name": "agent-guard: guardrails for AI coding agents",
+        "about": { "@id": "https://ravenrepo.github.io/agent-guard/#software" },
+        "author": { "@id": "https://iamamitkumar.dev/#person" },
+        "inLanguage": "en"
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://ravenrepo.github.io/agent-guard/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do I stop an AI coding agent from skipping or weakening tests?",
+            "acceptedAnswer": { "@type": "Answer", "text": "agent-guard runs as a hook before every file edit and shell command. It refuses added .skip and .only calls, edits that remove assertions or test cases, and shell commands that rewrite committed tests, and tells the agent to fix the code instead." }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I stop an agent from claiming 'all tests pass' when they don't?",
+            "acceptedAnswer": { "@type": "Answer", "text": "agent-guard's Stop hook checks the agent's final message against what actually ran. A tests claim needs a passing test run after the last code edit; printed text such as rc=0 does not count. Unbacked claims are refused and, if repeated, recorded as unresolved for your controller." }
+          },
+          {
+            "@type": "Question",
+            "name": "Does agent-guard work with Claude Code and Codex?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes. It uses the PreToolUse and Stop hook events of both clients. A team install registers system hooks and proves activation with the real clients before it reports success." }
+          },
+          {
+            "@type": "Question",
+            "name": "Does agent-guard send my code anywhere?",
+            "acceptedAnswer": { "@type": "Answer", "text": "No. It makes no network calls. The event log holds rule ids, paths, line numbers and hashes, never your code." }
+          },
+          {
+            "@type": "Question",
+            "name": "Who built agent-guard?",
+            "acceptedAnswer": { "@type": "Answer", "text": "agent-guard is built and maintained by Amit Kumar (@growthperclick), a founder and AI engineer who builds open tooling that makes AI coding agents trustworthy." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    :root { --bg:#0d1117; --panel:#161b22; --text:#e6edf3; --muted:#9da7b3; --accent:#f0b429; --accent2:#56d364; --line:#30363d; }
+    * { box-sizing:border-box; }
+    body { margin:0; font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--text); }
+    a { color:#79c0ff; }
+    main, header, footer { max-width:960px; margin:0 auto; padding:0 20px; }
+    header { padding-top:56px; }
+    .eyebrow { color:var(--accent2); font-weight:600; letter-spacing:.04em; text-transform:uppercase; font-size:13px; }
+    h1 { font-size:clamp(32px,5vw,52px); line-height:1.1; margin:10px 0 16px; }
+    h2 { font-size:28px; margin:48px 0 12px; }
+    h3 { font-size:19px; margin:20px 0 6px; }
+    .lead { font-size:20px; color:var(--muted); max-width:780px; }
+    .cta { display:flex; gap:12px; flex-wrap:wrap; margin:26px 0 8px; }
+    .btn { display:inline-block; padding:11px 18px; border-radius:10px; text-decoration:none; font-weight:600; border:1px solid var(--line); color:var(--text); background:var(--panel); }
+    .btn.primary { background:var(--accent); color:#1b1300; border-color:var(--accent); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-top:12px; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 20px; }
+    pre { background:#010409; border:1px solid var(--line); border-radius:12px; padding:16px; overflow-x:auto; font-size:14.5px; line-height:1.5; }
+    code { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+    table { border-collapse:collapse; width:100%; font-size:15.5px; }
+    th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+    details { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 16px; margin:10px 0; }
+    summary { cursor:pointer; font-weight:600; }
+    footer { color:var(--muted); padding:40px 20px 60px; border-top:1px solid var(--line); margin-top:56px; }
+    .muted { color:var(--muted); }
+  </style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Open source · Python · Apache-2.0 · Claude Code and Codex</div>
+  <h1>agent-guard: guardrails for AI coding agents</h1>
+  <p class="lead">Coding agents game the check they can see: they skip the failing test, silence the type checker, leave a TODO where the code should be, and report "all tests pass" without a passing run. agent-guard refuses those shortcuts the moment the agent tries them, and tells it what to do instead.</p>
+  <div class="cta">
+    <a class="btn primary" href="https://github.com/RavenRepo/agent-guard">View on GitHub</a>
+    <a class="btn" href="https://github.com/RavenRepo/agent-guard/blob/main/docs/DEPLOY.md">Deployment guide</a>
+    <a class="btn" href="https://github.com/sponsors/RavenRepo">Sponsor</a>
+  </div>
+</header>
+
+<main>
+<pre><code>agent-guard refused this action:
+- [masked-exit] /work/api 'pnpm -F @acme/api typecheck 2>&amp;1 | tail -3'
+  This hides the check's exit code. Use `set -o pipefail;` before piping, and never `|| true` a check.</code></pre>
+
+  <h2>Three layers, one rule engine</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Hooks</h3>
+      <p>Before every file edit and shell command, and when the agent stops, in Claude Code and Codex. Shortcuts are refused with a reason the agent reads; a success claim needs a passing run of the matching check after the last code edit.</p>
+    </div>
+    <div class="card">
+      <h3>Runner scan</h3>
+      <p><code>agent-guard scan BASE</code> applies the same rules to the branch diff in CI: additions, edits, deletions and renames, so nothing that slipped past the hooks reaches main.</p>
+    </div>
+    <div class="card">
+      <h3>Guarded builds</h3>
+      <p>For tasks you define with a contract, the agent can only read granted files and submit edits. A change is accepted only if every behaviour case passes in a sandbox and a planted bad implementation is caught.</p>
+    </div>
+  </div>
+
+  <h2>What it catches</h2>
+  <table>
+    <thead><tr><th>Shortcut</th><th>Examples</th></tr></thead>
+    <tbody>
+      <tr><td>Silencing the checker</td><td><code>@ts-ignore</code>, <code>eslint-disable</code>, <code>as any</code>, <code>--ignoreConfig</code>, <code>vitest -u</code></td></tr>
+      <tr><td>Placeholders instead of code</td><td>TODO, "for now", <code>throw new Error('not implemented')</code>, <code>// ... existing code ...</code>, commented-out code</td></tr>
+      <tr><td>Gaming tests</td><td><code>.skip</code>, <code>.only</code>, removed assertions, deleted tests, rewriting committed tests from the shell</td></tr>
+      <tr><td>Fake implementations</td><td>checks that always return true, empty gate lists, swallowed errors, code that behaves differently under test</td></tr>
+      <tr><td>Getting around the gate</td><td><code>|| true</code>, <code>| tail</code> without pipefail, <code>--no-verify</code>, editing CI or lint config, force-push</td></tr>
+      <tr><td>Claims</td><td>"all tests pass" with no passing test run since the last edit; "production-ready"</td></tr>
+    </tbody>
+  </table>
+  <p class="muted">23 data-driven rules plus 8 built-in rules. Every rule ships with examples of the shortcut and of the honest code next to it, and is proven to refuse one and allow the other.</p>
+
+  <h2>Quick start</h2>
+<pre><code>git clone https://github.com/RavenRepo/agent-guard.git &amp;&amp; cd agent-guard
+tests/run.sh                                  # rule self-test plus the test suite
+bin/agent-guard rules                         # what it refuses
+bin/agent-guard prove --disposable enforce    # see your real clients get blocked, safely</code></pre>
+  <p class="muted">Python 3.10+, no dependencies. Install as a package with <code>pipx install git+https://github.com/RavenRepo/agent-guard.git</code>.</p>
+
+  <h2>FAQ</h2>
+  <details open><summary>How do I stop an AI coding agent from skipping or weakening tests?</summary><p>agent-guard runs as a hook before every file edit and shell command. It refuses added <code>.skip</code> and <code>.only</code> calls, edits that remove assertions or test cases, and shell commands that rewrite committed tests, and tells the agent to fix the code instead.</p></details>
+  <details><summary>How do I stop an agent from claiming "all tests pass" when they don't?</summary><p>The Stop hook checks the agent's final message against what actually ran. A tests claim needs a passing test run after the last code edit; printed text such as <code>rc=0</code> does not count. Unbacked claims are refused and, if repeated, recorded as unresolved for your controller.</p></details>
+  <details><summary>Does agent-guard work with Claude Code and Codex?</summary><p>Yes. It uses the PreToolUse and Stop hook events of both clients. A team install registers system hooks and proves activation with the real clients before it reports success.</p></details>
+  <details><summary>Does agent-guard send my code anywhere?</summary><p>No. It makes no network calls. The event log holds rule ids, paths, line numbers and hashes, never your code.</p></details>
+  <details><summary>Who built agent-guard?</summary><p>agent-guard is built and maintained by <a href="https://iamamitkumar.dev">Amit Kumar</a> (<a href="https://x.com/growthperclick">@growthperclick</a>), a founder and AI engineer who builds open tooling that makes AI coding agents trustworthy.</p></details>
+
+  <h2>About the author</h2>
+  <p><a href="https://iamamitkumar.dev">Amit Kumar</a> spent 16 years in growth and go-to-market before building AI agent systems. He runs Claude Code and Codex agents every day and builds the tooling around them: guardrails, model routing, evals and governance. More at <a href="https://growthperclick.com">growthperclick.com</a>.</p>
+  <p>Also by the author: <a href="https://ravenrepo.github.io/ladder/">ladder</a>, which runs recurring LLM work on the cheapest model that still passes a cross-family verifier gate.</p>
+  <p>If agent-guard keeps your agents honest, please consider <a href="https://github.com/sponsors/RavenRepo">sponsoring its development</a>.</p>
+</main>
+
+<footer>
+  <p>agent-guard is licensed under Apache-2.0. Source: <a href="https://github.com/RavenRepo/agent-guard">github.com/RavenRepo/agent-guard</a> ·
+  Author: <a href="https://iamamitkumar.dev" rel="author">Amit Kumar</a> ·
+  <a href="https://github.com/RavenRepo">GitHub</a> · <a href="https://x.com/growthperclick">X</a> ·
+  <a href="https://www.linkedin.com/in/growthperclick/">LinkedIn</a> · <a href="https://growthperclick.com">growthperclick.com</a></p>
+</footer>
+</body>
+</html>
