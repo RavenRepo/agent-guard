@@ -5,3 +5,4 @@
 - **An agent got away with a shortcut:** open a [Missed shortcut](https://github.com/RavenRepo/agent-guard/issues/new?template=missed_shortcut.yml) issue. It becomes a new rule.
 - **Something broke:** open a [Bug report](https://github.com/RavenRepo/agent-guard/issues/new?template=bug_report.yml).
 - **A way around the guard:** report it privately, as described in [SECURITY.md](SECURITY.md).
+- **Supporting the project:** see [GitHub Sponsors](https://github.com/sponsors/RavenRepo).
