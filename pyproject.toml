@@ -38,6 +38,7 @@ Documentation = "https://github.com/RavenRepo/agent-guard/tree/main/docs"
 Issues = "https://github.com/RavenRepo/agent-guard/issues"
 Changelog = "https://github.com/RavenRepo/agent-guard/blob/main/CHANGELOG.md"
 Security = "https://github.com/RavenRepo/agent-guard/security/policy"
+Funding = "https://github.com/sponsors/RavenRepo"
 
 [project.scripts]
 agent-guard = "agentguard.cli:main"

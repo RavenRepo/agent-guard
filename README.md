@@ -7,6 +7,7 @@
 ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)
 ![Dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen.svg)
 ![Status: alpha](https://img.shields.io/badge/status-alpha-orange.svg)
+[![Sponsor](https://img.shields.io/badge/sponsor-%E2%9D%A4-db61a2.svg?logo=githubsponsors)](https://github.com/sponsors/RavenRepo)
 
 ```text
 agent-guard refused this action:
@@ -151,6 +152,15 @@ No. It refuses named, mechanical shortcuts, and proves behaviour you specify. De
 - **Guarded builds suit bounded tasks** (functions, scripts, CLIs). A probe gets no network, 384 MiB, one CPU and 6 seconds.
 - **The Stop hook doesn't decide completion.** It records verdicts; your controller decides, using the verdict and the runner's own result.
 - **Tested on Linux** with Claude Code 2.1.332 and Codex 0.168.0.
+
+## Sponsor the project
+
+agent-guard is free and open source. Sponsorship pays for the work that keeps it useful:
+- growing and tuning the rule catalogue as new shortcuts turn up;
+- re-testing the hooks against each new release of the supported clients;
+- triaging false positives quickly.
+
+If it keeps your agents honest, please consider [sponsoring on GitHub](https://github.com/sponsors/RavenRepo).
 
 ## Contributing and security
 
