@@ -1,0 +1,7 @@
+export function classify(message) {
+  const firstLine = String(message).split('\n', 1)[0];
+  if (/timed? ?out/i.test(firstLine)) return 'timeout';
+  if (/\bout of memory\b|\boom\b/i.test(firstLine)) return 'oom';
+  if (/econnrefused|connection/i.test(firstLine)) return 'connection';
+  return 'assertion';
+}

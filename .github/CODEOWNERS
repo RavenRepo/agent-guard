@@ -1,0 +1,5 @@
+# Every change is reviewed by a maintainer. Rules and the policy engine get the closest look.
+* @RavenRepo
+/agentguard/rulepacks/ @RavenRepo
+/agentguard/rules.py @RavenRepo
+/install/ @RavenRepo

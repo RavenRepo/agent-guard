@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a way around the guard (security)
+    url: https://github.com/RavenRepo/agent-guard/security/advisories/new
+    about: A bypass that lets an agent avoid a rule is a vulnerability. Please report it privately.
+  - name: Questions and ideas
+    url: https://github.com/RavenRepo/agent-guard/blob/main/SUPPORT.md
+    about: Where to ask before opening an issue.

@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.sh text eol=lf
+bin/agent-guard text eol=lf
+*.json linguist-language=JSON
+docs/** linguist-documentation

@@ -1,0 +1,25 @@
+name: Missed shortcut (new rule)
+description: An agent avoided the work in a way no rule catches.
+labels: ["new-rule", "needs-triage"]
+body:
+  - type: textarea
+    id: shortcut
+    attributes:
+      label: The shortcut
+      description: A real, redacted example of the edit or command.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: clean
+    attributes:
+      label: The clean twin
+      description: What honest code doing the same job looks like. A rule must allow this.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: where
+    attributes:
+      label: Where it was found
+      description: Becomes the rule's `source`. A review, an incident or a replay.

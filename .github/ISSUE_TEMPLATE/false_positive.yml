@@ -1,0 +1,30 @@
+name: False positive
+description: A rule refused honest work.
+labels: ["false-positive", "needs-triage"]
+body:
+  - type: input
+    id: rule
+    attributes:
+      label: Rule id
+      description: The id in brackets in the refusal, for example `type-escape`.
+    validations:
+      required: true
+  - type: textarea
+    id: refused
+    attributes:
+      label: What was refused
+      description: The smallest edit or command that reproduces it (redact anything private).
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it is legitimate
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: agent-guard version
+      description: Output of `agent-guard version`.

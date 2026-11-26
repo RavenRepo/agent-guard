@@ -1,0 +1,630 @@
+{
+ "name": "core",
+ "version": 1,
+ "about": "Built-in agent-guard rules. Every rule carries examples that prove it refuses the fault and allows the clean twin.",
+ "rules": [
+  {
+   "id": "suppress-checker",
+   "kind": "line",
+   "pattern": "@ts-(?:ignore|nocheck)\\b|eslint-disable|\\b(?:istanbul|c8|v8)\\s+ignore\\b|biome-ignore|#\\s*type:\\s*ignore|#\\s*noqa\\b|#\\s*pragma:\\s*no\\s*cover|//\\s*nolint\\b|#\\[allow\\(|\\bNOSONAR\\b|@SuppressWarnings|\\bpylint:\\s*disable",
+   "help": "Fix the type or lint error instead of silencing the checker.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.ts",
+      "text": "// @ts-ignore"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "/* eslint-disable no-console */"
+     },
+     {
+      "path": "src/a.py",
+      "text": "x = f()  # type: ignore"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/a.ts",
+      "text": "const x: number = f();"
+     }
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11"
+  },
+  {
+   "id": "ts-expect-error",
+   "kind": "line",
+   "pattern": "@ts-expect-error\\b",
+   "files": "nontest",
+   "help": "Only tests may use @ts-expect-error, followed by the reason in words.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.ts",
+      "text": "// @ts-expect-error the client type is wrong"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/__tests__/a.spec.ts",
+      "text": "// @ts-expect-error Tx has no transaction: TenantDb owns BEGIN and COMMIT."
+     }
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11"
+  },
+  {
+   "id": "ts-expect-error-reason",
+   "kind": "line",
+   "pattern": "@ts-expect-error(?!(?:[^A-Za-z\\n]*[A-Za-z]{2,}){3})",
+   "files": "test",
+   "help": "Say in words why the error is expected (three words at least).",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/__tests__/a.spec.ts",
+      "text": "// @ts-expect-error"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/__tests__/a.spec.ts",
+      "text": "// @ts-expect-error Tx has no transaction: TenantDb owns BEGIN and COMMIT."
+     }
+    ]
+   },
+   "source": "a test suite that documents each expected type error in words"
+  },
+  {
+   "id": "placeholder",
+   "kind": "line",
+   "part": "comment",
+   "files": "nontest",
+   "pattern": "\\b(?:TODO|FIXME|XXX|HACK)\\b|\\bimplement(?:ed)?\\s+(?:this\\s+|it\\s+|me\\s+)?later\\b|\\bnot\\s+(?:yet\\s+)?implemented\\b|\\bplaceholder\\s+(?:implementation|logic|code|function|value|data|for)\\b|\\b(?:is|as)\\s+a\\s+placeholder\\b|\\bstub(?:bed)?\\s+(?:out|for\\s+now)\\b|\\bfor\\s+now\\b|\\bin\\s+(?:a\\s+)?real\\s+(?:implementation|app|system|world)\\b|\\bin\\s+production,?\\s+(?:this|we|it)\\s+(?:would|should)\\b|\\bsimplified\\s+(?:version|implementation|logic)\\b|\\b(?:mock|dummy|fake)\\s+implementation\\b|\\btemporary\\s+(?:fix|hack|workaround)\\b|\\bleft\\s+as\\s+an\\s+exercise\\b",
+   "flags": "i",
+   "help": "Write the real code, or leave the item out and report it as not done.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.ts",
+      "text": "  // TODO: handle tenants"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "// in production this would call the anchor store"
+     },
+     {
+      "path": "src/a.py",
+      "text": "    # for now return the cached value"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/a.ts",
+      "text": "// Refuse an unbound tenant: RLS would hide every row."
+     },
+     {
+      "path": "src/a.sh",
+      "text": "echo \"## S: required sections, no placeholder\""
+     }
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11; narrowed after the 2026-11-26 replay"
+  },
+  {
+   "id": "placeholder-code",
+   "kind": "line",
+   "part": "code",
+   "files": "nontest",
+   "flags": "i",
+   "pattern": "throw\\s+new\\s+Error\\(\\s*['\\\"`](?:not\\s+(?:yet\\s+)?implemented|todo|unimplemented)|\\braise\\s+NotImplementedError\\b|\\bunimplemented!\\(|\\btodo!\\(|panic\\(\\s*\\\"(?:not implemented|todo)",
+   "help": "Write the real code, or leave the item out and report it as not done.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.ts",
+      "text": "  throw new Error('not implemented');"
+     },
+     {
+      "path": "src/a.py",
+      "text": "    raise NotImplementedError"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/a.ts",
+      "text": "  throw new AnchorError('write failed');"
+     }
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11"
+  },
+  {
+   "id": "shortcut-unreferenced",
+   "kind": "line",
+   "part": "comment",
+   "pattern": "\\bshortcut:",
+   "flags": "i",
+   "unless": "\\bstep\\s+\\d+|\\b[A-Z][A-Z0-9]+-\\d+\\b|\\bADR\\s*\\d{1,4}|\\b\\d{4}:\\d+|#\\d+",
+   "help": "A `shortcut:` note must name where it gets fixed: an issue (ABC-123 or #123), a plan step, or an ADR.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.ts",
+      "text": "// shortcut: hand-written map"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/a.ts",
+      "text": "// shortcut: hand-written map, generated in step 7"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "// shortcut: one arc per table; widen when needed (0027:85)."
+     },
+     {
+      "path": "src/a.ts",
+      "text": "// shortcut: cache per process until PLAT-42 adds a shared store"
+     }
+    ]
+   },
+   "source": "an audit where most deferral notes named no ticket, so nothing tracked them"
+  },
+  {
+   "id": "elision",
+   "kind": "line",
+   "part": "comment",
+   "flags": "i",
+   "pattern": "(?:\\.\\.\\.|…)\\s*(?:the\\s+)?(?:existing|rest\\s+of(?:\\s+the)?|remaining|other|previous|same\\s+as\\s+before)\\s+(?:code|implementation|methods?|logic|tests?|file|content|cases)\\b",
+   "help": "Write the whole content. `... existing code ...` deletes the code it stands for.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.ts",
+      "text": "  // ... existing code ..."
+     },
+     {
+      "path": "src/__tests__/a.spec.ts",
+      "text": "  // ... rest of the tests"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/a.ts",
+      "text": "// The verify job re-hashes each chain."
+     }
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11"
+  },
+  {
+   "id": "commented-out-code",
+   "kind": "line",
+   "part": "comment",
+   "languages": [
+    "js"
+   ],
+   "skip_block_comments": true,
+   "pattern": "^(?:(?:const|let|var)\\s+[\\w${}\\[\\],\\s]+=.*|(?:import|export)\\s+.*(?:from\\s+['\\\"].*|[{*].*)|(?:return|await|throw)\\s+\\S.*;|(?:if|for|while|switch)\\s*\\(.*\\)\\s*\\{|\\}\\s*(?:else\\b.*)?\\{?|[\\w$.\\[\\]'\\\"]+\\s*\\(.*\\)\\s*;|[\\w$.\\[\\]]+\\s*[+\\-*/]?=\\s*.+;|\\}\\)?;?)$",
+   "help": "Delete the code (git keeps it) or make it work. Don't leave it commented out.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.ts",
+      "text": "  // const tenant = await resolveTenant(req);"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "// await anchorStore.verify(head);"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/a.ts",
+      "text": "// The verify job re-hashes each chain; see ADR 0008."
+     },
+     {
+      "path": "src/a.ts",
+      "text": "/**\n * const t = await tenantDb.run(tx);\n */"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "const url = 'https://example.com/a;b';"
+     }
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11"
+  },
+  {
+   "id": "commented-out-code-py",
+   "kind": "line",
+   "part": "comment",
+   "languages": [
+    "py"
+   ],
+   "pattern": "^(?:(?:def|class)\\s+\\w+\\s*[(:].*:|import\\s+[\\w.]+(?:\\s+as\\s+\\w+)?|from\\s+[\\w.]+\\s+import\\s+[\\w, ]+|[\\w.\\[\\]]+\\s*=\\s*[\\w.\\[\\]'\\\"]+\\(.*\\)|(?:print|self\\.\\w+|[\\w]+\\.[\\w.]+)\\(.*\\)|return\\s+[\\w.]+\\(.*\\))$",
+   "help": "Delete the code (git keeps it) or make it work. Don't leave it commented out.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.py",
+      "text": "# result = verify_chain(rows)"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/a.py",
+      "text": "# Verify the chain before trusting the head."
+     }
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11"
+  },
+  {
+   "id": "skipped-test",
+   "kind": "line",
+   "part": "code",
+   "pattern": "\\b(?:it|test|describe|suite|context|bench)\\.(?:skip|only|todo|fails|skipIf|runIf)\\b|\\b(?:xit|xdescribe|xtest|fit|fdescribe|ftest)\\s*\\(|@pytest\\.mark\\.(?:skip|skipif|xfail)\\b|\\bpytest\\.skip\\(|@unittest\\.skip|\\bt\\.Skip(?:Now|f)?\\(|\\bpassWithNoTests\\b",
+   "help": "Make the test pass or report it failing. Skipping or focusing tests hides the result.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/__tests__/a.spec.ts",
+      "text": "it.skip('refuses tenant B', () => {});"
+     },
+     {
+      "path": "src/__tests__/a.spec.ts",
+      "text": "describe.only('x', () => {});"
+     },
+     {
+      "path": "tests/test_a.py",
+      "text": "@pytest.mark.skip(reason='flaky')"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/__tests__/a.spec.ts",
+      "text": "it('refuses tenant B', () => { expect(read(b)).toEqual([]); });"
+     }
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11"
+  },
+  {
+   "id": "type-escape",
+   "kind": "line",
+   "part": "code",
+   "languages": [
+    "ts"
+   ],
+   "files": "nontest",
+   "pattern": "\\bas\\s+any\\b|:\\s*any\\b(?![\\w-])|<any>|\\bas\\s+unknown\\s+as\\b|\\bany\\[\\]",
+   "help": "Give the value a real type. `any` and double casts switch the type checker off.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.ts",
+      "text": "export const x = y as any;"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "export function f(a: any) { return a; }"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "export const c = client as unknown as PoolClient;"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/__tests__/a.spec.ts",
+      "text": "const c = client as unknown as PoolClient;"
+     },
+     {
+      "path": "src/routeTree.gen.ts",
+      "text": "export const r = x as any;"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "// accepts: any tenant id"
+     }
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11"
+  },
+  {
+   "id": "test-env-branch",
+   "kind": "line",
+   "part": "code",
+   "files": "nontest",
+   "pattern": "process\\.env\\.(?:NODE_ENV\\s*[!=]==?\\s*['\\\"]test['\\\"]|VITEST\\b|JEST_WORKER_ID\\b)|import\\.meta\\.env\\.(?:VITEST\\b|MODE\\s*[!=]==?\\s*['\\\"]test)|['\\\"]PYTEST_CURRENT_TEST['\\\"]|\\bisTest(?:Env|ing|Mode)?\\b",
+   "help": "Production code must not behave differently under test.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.ts",
+      "text": "if (process.env.NODE_ENV === 'test') { return true; }"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "const fast = Boolean(process.env.VITEST);"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/__tests__/a.spec.ts",
+      "text": "const fast = Boolean(process.env.VITEST);"
+     }
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11"
+  },
+  {
+   "id": "sandbox-probe",
+   "kind": "line",
+   "part": "code",
+   "files": "nontest",
+   "pattern": "process\\.env\\.(?:PATH|HOME|USER|HOSTNAME|CI|container)\\s*[!=]==?|process\\.env\\.(?:PATH|HOME)\\s*\\?\\?\\s*['\\\"]{2}\\s*\\)\\s*[!=]==|os\\.environ(?:\\.get\\(\\s*|\\[\\s*)['\\\"](?:PATH|HOME|USER|HOSTNAME|CI|container)['\\\"]\\s*[\\])]?\\s*[!=]=|/proc/1/|/\\.dockerenv|process\\.cwd\\(\\)\\s*[!=]==?|os\\.getcwd\\(\\)\\s*[!=]=|['\\\"]/(?:checks|runtime)(?:/|['\\\"])",
+   "help": "Code must not detect the checking environment. Behave the same everywhere.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.mjs",
+      "text": "  const probe = process.env.PATH === '/runtime:/usr/bin';"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "if (existsSync('/.dockerenv')) return cached;"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "const inSandbox = process.cwd() === '/src';"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/a.ts",
+      "text": "const bin = path.join(process.env.HOME ?? '', 'bin');"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "const p = process.env.PATH;"
+     }
+    ]
+   },
+   "source": "review of the runtime guard, finding F1 (2026-11-26): a PATH check passed every probe"
+  },
+  {
+   "id": "vacuous-gate-list",
+   "kind": "line",
+   "part": "code",
+   "files": "nontest",
+   "pattern": "\\b[A-Z][A-Z0-9_]*(?:CHECKS|RULES|TABLES|GATES|VALIDATORS|GUARDS|POLICIES)\\b\\s*(?::[^=\\n]+)?=\\s*\\[\\s*\\]",
+   "help": "An empty list makes this gate pass trivially. Fill it, or mark the gate as not built.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.ts",
+      "text": "export const CATALOG_TABLES: readonly string[] = [];"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/a.ts",
+      "text": "export const CATALOG_TABLES: readonly string[] = ['frameworks'];"
+     }
+    ]
+   },
+   "source": "an audit that found two gates whose table lists were empty, so they passed trivially"
+  },
+  {
+   "id": "swallowed-error",
+   "kind": "blob",
+   "languages": [
+    "js"
+   ],
+   "files": "nontest",
+   "pattern": "catch\\s*(?:\\(\\s*[\\w$]*\\s*(?::\\s*\\w+)?\\s*\\))?\\s*\\{\\s*(?://[^\\n]*\\n\\s*|/\\*[\\s\\S]*?\\*/\\s*)*\\}|\\.catch\\(\\s*(?:async\\s*)?\\(?\\s*[\\w$]*\\s*\\)?\\s*=>\\s*(?:\\{\\s*\\}|undefined|null|void\\s+0|\\[\\]|false)\\s*\\)|catch\\s*\\(\\s*[\\w$]+\\s*\\)\\s*\\{\\s*(?:console\\.(?:log|warn|error|info|debug)|(?:this\\.)?logger\\.\\w+)\\([^;{}]*\\);?\\s*\\}",
+   "unless_before": "\\b(?:stop|rm|rmdir|unlink|close|end|release|destroy|dispose|kill|drop|cleanup|teardown|shutdown|disconnect)\\w*\\([^()]*(?:\\([^()]*\\)[^()]*)*\\)\\s*$",
+   "flags": "i",
+   "help": "Handle the error or let it propagate. An empty or log-only catch hides failures. Best-effort cleanup may ignore its own failure.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.ts",
+      "text": "try {\n  await f();\n} catch {\n}"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "try { await f(); } catch (e) { console.log(e); }"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "export const p = f().catch(() => {});"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/a.ts",
+      "text": "try { await f(); } catch (e) { throw new AnchorError('write failed', { cause: e }); }"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "try { await fn(c); } finally {\n  await stopLocalCluster(dir).catch(() => undefined);\n  await rm(dir, { recursive: true, force: true }).catch(() => undefined);\n}"
+     }
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11; cleanup exemption from calibration on a 288-file codebase"
+  },
+  {
+   "id": "swallowed-error-py",
+   "kind": "blob",
+   "languages": [
+    "py"
+   ],
+   "files": "nontest",
+   "flags": "m",
+   "pattern": "except(?:\\s+[\\w.,() ]+?(?:\\s+as\\s+\\w+)?)?\\s*:\\s*(?:#[^\\n]*)?\\n?\\s*(?:pass|\\.\\.\\.)\\s*(?:#[^\\n]*)?$",
+   "help": "Handle the error or let it propagate. `except: pass` hides failures.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.py",
+      "text": "try:\n    f()\nexcept Exception:\n    pass"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/a.py",
+      "text": "try:\n    f()\nexcept OSError as e:\n    raise AnchorError('write failed') from e"
+     }
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11"
+  },
+  {
+   "id": "vacuous-guard",
+   "kind": "blob",
+   "languages": [
+    "js"
+   ],
+   "files": "nontest",
+   "pattern": "\\b(?:verify|validate|authori[sz]e|check|guard|canActivate|can[A-Z]\\w*|is(?:Allowed|Authori[sz]ed|Valid|Permitted)|has(?:Permission|Access|Role)|ensure[A-Z]\\w*)\\w*\\s*(?:=\\s*(?:async\\s*)?)?\\([^()]*\\)\\s*(?::\\s*[^{=;]+?)?\\s*(?:=>\\s*\\(?\\s*true\\s*\\)?\\s*[;,)]|\\{\\s*return\\s+true\\s*;?\\s*\\})",
+   "help": "A check that always passes is no check. Implement it, or leave it failing and say so.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.ts",
+      "text": "export function verifyAnchor(head: string): boolean { return true; }"
+     },
+     {
+      "path": "src/a.ts",
+      "text": "export const canActivate = (ctx: Ctx): boolean => true;"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/a.ts",
+      "text": "export function verifyAnchor(head: string): boolean { return store.extends(head); }"
+     }
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11"
+  },
+  {
+   "id": "vacuous-guard-py",
+   "kind": "blob",
+   "languages": [
+    "py"
+   ],
+   "files": "nontest",
+   "pattern": "def\\s+(?:verify|validate|authori[sz]e|check|is_allowed|is_authori[sz]ed|is_valid|has_permission|has_access|can_\\w+)\\w*\\s*\\([^)]*\\)[^:\\n]*:\\s*\\n\\s*return\\s+True\\b",
+   "help": "A check that always passes is no check. Implement it, or leave it failing and say so.",
+   "examples": {
+    "refuse": [
+     {
+      "path": "src/a.py",
+      "text": "def is_allowed(user, tenant):\n    return True"
+     }
+    ],
+    "allow": [
+     {
+      "path": "src/a.py",
+      "text": "def is_allowed(user, tenant):\n    return tenant in user.tenants"
+     }
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11"
+  },
+  {
+   "id": "hook-bypass",
+   "kind": "shell",
+   "pattern": "--no-verify\\b|\\bgit\\b.*\\bcommit\\b.*\\s-[a-zA-Z]*n[a-zA-Z]*\\b|\\b(?:LEFTHOOK|HUSKY)=0\\b|\\bLEFTHOOK_EXCLUDE=|\\bSKIP_HOOKS?=|-c\\s+core\\.hooksPath=|\\bconfig\\s+(?:--\\w+\\s+)*core\\.hooksPath\\s+[^\\s-]|--unset(?:-all)?\\s+core\\.hooksPath",
+   "help": "Commit hooks are part of the gate. Don't skip them.",
+   "examples": {
+    "refuse": [
+     "git commit --no-verify -m 'wip'",
+     "LEFTHOOK=0 git commit -m 'x'",
+     "git commit -nm 'x'",
+     "git config core.hooksPath /dev/null",
+     "git config --unset core.hooksPath"
+    ],
+    "allow": [
+     "git config --get core.hooksPath",
+     "git commit -m 'Describe the -n flag'"
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11; reads allowed after the 2026-11-26 replay"
+  },
+  {
+   "id": "checker-weakened",
+   "kind": "shell",
+   "pattern": "--ignoreConfig\\b|--passWithNoTests\\b|--no-typecheck\\b|--skipLibCheck\\b|--no-coverage-threshold\\b|--coverage\\.thresholds\\.\\w+=0\\b|--max-warnings[= ]\\d{3,}|\\b(?:vitest|jest)\\b.*\\s(?:-u|--update(?:Snapshot)?)\\b",
+   "help": "This flag weakens the check. Run it with the project's own settings.",
+   "examples": {
+    "refuse": [
+     "pnpm exec tsc --ignoreConfig src/a.ts",
+     "pnpm vitest run -u",
+     "npx jest --passWithNoTests"
+    ],
+    "allow": [
+     "pnpm vitest run",
+     "pnpm exec tsc -p tsconfig.json --noEmit"
+    ]
+   },
+   "source": "agents that ran the type checker with --ignoreConfig to get a clean result"
+  },
+  {
+   "id": "force-push",
+   "kind": "shell",
+   "pattern": "\\bgit\\b.*\\bpush\\b.*(?:--force(?:-with-lease)?\\b|\\s-[a-zA-Z]*f\\b|\\s\\+[\\w./-]+)",
+   "help": "Force-pushing rewrites reviewed history. Agents don't force-push.",
+   "examples": {
+    "refuse": [
+     "git push --force origin feat/x",
+     "git push origin +feat/x"
+    ],
+    "allow": [
+     "git push origin feat/x"
+    ]
+   },
+   "source": "standing rules: never force-push"
+  },
+  {
+   "id": "forbidden-claim",
+   "kind": "claim",
+   "flags": "i",
+   "pattern": "\\bproduction[- ]ready\\b|\\bready for production\\b|\\b(?:is|are|now) (?:live )?in production\\b|\\bdeployed to production\\b",
+   "help": "An agent can't establish production readiness. Describe what was built and what was verified instead.",
+   "examples": {
+    "refuse": [
+     "The audit log is production-ready."
+    ],
+    "allow": [
+     "Nothing is production-ready yet."
+    ]
+   },
+   "source": "agents that called unverified work production-ready"
+  },
+  {
+   "id": "unbacked-claim",
+   "kind": "claim",
+   "flags": "i",
+   "needs_evidence": true,
+   "pattern": "\\ball (?:the )?(?:tests?|checks?) (?:now )?(?:pass(?:es|ed)?|are (?:passing|green))\\b|\\btests? (?:now )?(?:pass(?:es|ed)?|are passing|are green)\\b|\\b(?:typecheck|type check|lint|build|full check|the check|ci)s? (?:now )?(?:pass(?:es|ed)?|is green|succeeds?|succeeded|is clean)\\b|\\beverything (?:works|passes|is working)\\b|\\bfully (?:working|functional|tested|verified)\\b|\\bworks as expected\\b|\\bshould (?:now )?(?:work|pass|be fixed)\\b|\\bno (?:errors|issues|failures) (?:remain|found)\\b",
+   "help": "You claim success, but no check has passed since your last code edit. Run it now and quote the exit code, or remove the claim.",
+   "examples": {
+    "refuse": [
+     "Done. All tests pass.",
+     "The full check passes at the head."
+    ],
+    "allow": [
+     "I changed the guard. I have not run the tests yet."
+    ]
+   },
+   "source": "initial rule catalogue, 2026-11"
+  }
+ ]
+}

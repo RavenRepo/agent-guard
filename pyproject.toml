@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-guard"
+dynamic = ["version"]
+description = "Guardrails for AI coding agents: refuse shortcuts at edit time, gate 'all tests pass' claims on real checks, and prove behaviour for guarded builds."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "The agent-guard Authors" }]
+keywords = [
+  "ai-agents", "coding-agents", "guardrails", "llm", "ai-safety", "reward-hacking", "specification-gaming",
+  "claude-code", "codex", "hooks", "code-quality", "testing", "ci", "sandbox", "developer-tools",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Software Development :: Testing",
+  "Topic :: Security",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/RavenRepo/agent-guard"
+Documentation = "https://github.com/RavenRepo/agent-guard/tree/main/docs"
+Issues = "https://github.com/RavenRepo/agent-guard/issues"
+Changelog = "https://github.com/RavenRepo/agent-guard/blob/main/CHANGELOG.md"
+Security = "https://github.com/RavenRepo/agent-guard/security/policy"
+
+[project.scripts]
+agent-guard = "agentguard.cli:main"
+
+[tool.setuptools]
+packages = ["agentguard"]
+
+[tool.setuptools.package-data]
+agentguard = ["rulepacks/*.json"]
+
+[tool.setuptools.dynamic]
+version = { attr = "agentguard.VERSION" }
