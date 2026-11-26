@@ -33,7 +33,8 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/RavenRepo/agent-guard"
+Homepage = "https://ravenrepo.github.io/agent-guard/"
+Repository = "https://github.com/RavenRepo/agent-guard"
 Documentation = "https://github.com/RavenRepo/agent-guard/tree/main/docs"
 Issues = "https://github.com/RavenRepo/agent-guard/issues"
 Changelog = "https://github.com/RavenRepo/agent-guard/blob/main/CHANGELOG.md"
