@@ -8,6 +8,7 @@
 ![Dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen.svg)
 ![Status: alpha](https://img.shields.io/badge/status-alpha-orange.svg)
 [![Sponsor](https://img.shields.io/badge/sponsor-%E2%9D%A4-db61a2.svg?logo=githubsponsors)](https://github.com/sponsors/RavenRepo)
+[![Website](https://img.shields.io/badge/website-ravenrepo.github.io%2Fagent--guard-f0b429.svg)](https://ravenrepo.github.io/agent-guard/)
 
 ```text
 agent-guard refused this action:
@@ -143,6 +144,9 @@ One short-lived process per tool call: about 120 ms median on a laptop, mostly P
 **What if the guard itself has a bug?**
 It fails open. The action proceeds and the error is logged, so a guard bug never stops every agent. The runner scan is the backstop.
 
+**How do I stop an agent from claiming "all tests pass" when they don't?**
+The Stop hook checks the final message against what actually ran. A tests claim needs a passing test run after the last code edit; printed text such as `rc=0` doesn't count. A claim that stays unbacked is recorded as unresolved, so your controller can refuse to mark the work done.
+
 **Can it judge code quality?**
 No. It refuses named, mechanical shortcuts, and proves behaviour you specify. Design and readability still need review.
 
@@ -152,6 +156,10 @@ No. It refuses named, mechanical shortcuts, and proves behaviour you specify. De
 - **Guarded builds suit bounded tasks** (functions, scripts, CLIs). A probe gets no network, 384 MiB, one CPU and 6 seconds.
 - **The Stop hook doesn't decide completion.** It records verdicts; your controller decides, using the verdict and the runner's own result.
 - **Tested on Linux** with Claude Code 2.1.332 and Codex 0.168.0.
+
+## Author
+
+agent-guard is built and maintained by [Amit Kumar](https://iamamitkumar.dev) ([@growthperclick](https://x.com/growthperclick)), a founder and AI engineer who builds open tooling around AI coding agents: guardrails, model routing, evals and governance. Also by the author: [ladder](https://github.com/RavenRepo/ladder), which runs recurring LLM work on the cheapest model that still passes a cross-family verifier. More at [growthperclick.com](https://growthperclick.com).
 
 ## Sponsor the project
 

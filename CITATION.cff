@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use agent-guard in your work, please cite it as below."
+title: "agent-guard: guardrails for AI coding agents"
+type: software
+authors:
+  - given-names: Amit
+    family-names: Kumar
+    alias: growthperclick
+    website: "https://iamamitkumar.dev"
+repository-code: "https://github.com/RavenRepo/agent-guard"
+url: "https://ravenrepo.github.io/agent-guard/"
+abstract: >-
+  agent-guard refuses the shortcuts AI coding agents take at edit time,
+  such as skipped tests, silenced type checks, placeholder code and masked
+  exit codes, gates success claims on a passing run of the matching check,
+  scans branch diffs in CI, and accepts guarded builds only when their
+  behaviour is proven in a sandbox.
+keywords:
+  - AI coding agents
+  - guardrails
+  - Claude Code hooks
+  - Codex hooks
+  - reward hacking
+  - code quality
+license: Apache-2.0
+version: 0.3.0
+date-released: "2026-11-26"

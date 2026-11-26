@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/). Until 1.0, a minor version may change behaviour.
 
-## [0.3.0] - Unreleased
+## [0.3.0] - 2026-11-26
 
 ### Added
 - **Packaging.** `pyproject.toml` with an `agent-guard` console script and the core rule pack as package data. `python -m agentguard` also works.
@@ -12,6 +12,8 @@ All notable changes to this project are documented here. The format follows [Kee
   - GitHub templates: issue templates for false positives, missed shortcuts and bugs, a pull request template, and `CODEOWNERS`.
   - Automation: a CI workflow on Python 3.10 and 3.13 that also builds and installs the package. Draft pull requests skip it.
   - Dependency updates for the workflow's actions.
+- **A project website** at https://ravenrepo.github.io/agent-guard/. GitHub Pages publishes it from `site/` when it changes on `main`. It carries search, social and schema.org metadata, linked to the author.
+- **`CITATION.cff`**, so GitHub shows a "Cite this repository" box.
 - **Sponsorship.** A `FUNDING.yml` adds the repository's Sponsor button, and the README and package metadata link to GitHub Sponsors.
 - **A `check_wrappers` policy setting** for project scripts that run another check (for example a lock or queue wrapper). The command they wrap decides what kind of check it is.
 
